@@ -41,7 +41,7 @@ WORKDIR "$L2J_DEPLOY_DIR"
 COPY --from=build "$L2J_SOURCE_DIR/$L2JCLI_DIR/target/*.zip" "$L2J_SOURCE_DIR/$L2JGAME_DIR/target/*.zip" "$L2J_SOURCE_DIR/$L2JDP_DIR/target/*.zip" "$L2J_DEPLOY_DIR/"
 RUN \
   apk update && apk --no-cache add unzip openjdk17-jre mariadb-client && \
-  mkdir -p "$L2J_CUSTOM_DIR" "$L2J_DEPLOY_DIR/$L2JCLI_DIR/logs" "$L2J_DEPLOY_DIR/$L2JGAME_DIR/logs" && \
+  mkdir -p "$L2J_CUSTOM_DIR/game/config" "$L2J_DEPLOY_DIR/$L2JCLI_DIR/logs" "$L2J_DEPLOY_DIR/$L2JGAME_DIR/logs" && \
   unzip "$L2J_DEPLOY_DIR/*cli*.zip" -d "$L2J_DEPLOY_DIR/$L2JCLI_DIR" && \
   unzip "$L2J_DEPLOY_DIR/*game*.zip" -d "$L2J_DEPLOY_DIR/$L2JGAME_DIR" && \
   unzip "$L2J_DEPLOY_DIR/*datapack*.zip" -d "$L2J_DEPLOY_DIR/$L2JGAME_DIR" && \
