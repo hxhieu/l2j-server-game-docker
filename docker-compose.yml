@@ -7,6 +7,12 @@ volumes:
   game-server-logs:
   # custom gameserver data is preserved here
   game-server-custom-data:
+  # interlude volumes
+  game-server-int-logs:
+  game-server-int-config:
+  game-server-int-data:
+  game-server-int-geodata:
+  game-server-int-pathnode:
 
 networks:
   default:
@@ -32,7 +38,8 @@ services:
       - database
 
   game-server:
-    image: l2j-server-game
+    # previously build with ./make_docker_image
+    image: l2j-server-game:latest
     depends_on:
       - game-database
     ports:
@@ -61,3 +68,40 @@ services:
     networks:
       - database
       - server
+
+#  game-server-interlude:
+    # previously build with ./make_docker_image -g Interlude -d Interlude -t Interlude
+#    image: l2j-server-game:Interlude
+#    depends_on:
+#      - game-database
+#    ports:
+      # gameclient listener
+#      - 7777:7777
+#    environment:
+      # variables required on first startup to initialize the database
+#      - L2JGAME_DB_INIT=1
+#      - L2JGAME_DB_HOST=game-database
+#      - L2JGAME_DB_PORT=3306
+#      - L2JGAME_DB_USER=l2jgs
+#      - L2JGAME_DB_PASS=mariadb_l2jgs_password
+#      - L2JGAME_DB_NAME=l2jgsint
+#      - L2JGAME_DB_INSTALL_USER=root
+#      - L2JGAME_DB_INSTALL_PASS=mariadb_root_password
+      # variables required after initial start or custom config files in the mapped volumes
+#      - L2JGAME_server_URL=jdbc:mariadb://game-database:3306/l2jgsint
+#      - L2JGAME_server_Login=l2jgs
+#      - L2JGAME_server_Password=mariadb_l2jgs_password
+      # Connect to loginserver on this host and port
+#      - L2JGAME_server_LoginHost=login-server
+#      - L2JGAME_server_LoginPort=9014
+#    volumes:
+#      - game-server-int-logs:/opt/l2j/deploy/game/logs:rw
+       # readwrite required for automatic hexid.txt
+#      - game-server-int-config:/opt/l2j/deploy/game/config:rw
+       # readwrite required for crests
+#      - game-server-int-data:/opt/l2j/deploy/game/data:rw
+#      - game-server-int-geodata:/opt/l2j/deploy/game/geodata:ro
+#      - game-server-int-pathnode:/opt/l2j/deploy/game/pathnode:ro
+#    networks:
+#      - database
+#      - server
