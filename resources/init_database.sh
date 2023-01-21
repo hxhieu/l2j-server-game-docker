@@ -26,7 +26,7 @@ if [ $status -ne 0 ]; then
 fi
 
 echo "Create schema and intial data..."
-java -jar "$L2J_DEPLOY_DIR/$L2JCLI_DIR/l2jcli.jar" db install -sql "$L2J_DEPLOY_DIR/$srv_dir/sql" -u "$db_install_user" -p "$db_install_pass" -m FULL -t "$srv_component" -c -mods -url "jdbc:mariadb://$db_host:$db_port"
+java -jar "$L2J_DEPLOY_DIR/$L2JCLI_DIR/l2jcli.jar" db install -sql "$L2J_DEPLOY_DIR/$srv_dir/sql" -db "$db_name" -u "$db_install_user" -p "$db_install_pass" -m FULL -t "$srv_component" -c -mods -url "jdbc:mariadb://$db_host:$db_port"
 status=$?
 if [ $status -ne 0 ]; then
   return 1
