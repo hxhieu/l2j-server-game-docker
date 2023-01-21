@@ -43,7 +43,7 @@ else
 
       if [ -f "$propertiesDir/$propertiesFile" ]; then
         #echo "-> $serverComponent $propertiesFile: $property = $value"
-        sed -i -e "s&^$property.*&$property=$value&" "$propertiesDir/$propertiesFile"
+        sed -i -e "s&^$property\\s*=.*&$property=$value&" "$propertiesDir/$propertiesFile"
       fi
     fi
   done
