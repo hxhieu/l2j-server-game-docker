@@ -33,7 +33,7 @@ if [ $status -ne 0 ]; then
 fi
 
 echo "Ensure user '$db_user' exists..."
-mysql -h "$db_host" -P "$db_port" -u "$db_install_user" -p"$db_install_pass" -e "CREATE OR REPLACE USER '$db_user'@'%' IDENTIFIED BY '$db_pass';"
+mysql -h "$db_host" -P "$db_port" -u "$db_install_user" -p"$db_install_pass" -e "CREATE USER IF NOT EXISTS '$db_user'@'%' IDENTIFIED BY '$db_pass';"
 status=$?
 if [ $status -ne 0 ]; then
   return 1
