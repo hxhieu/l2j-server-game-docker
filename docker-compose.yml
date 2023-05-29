@@ -7,7 +7,7 @@ volumes:
   game-server-logs:
   # custom gameserver data is preserved here
   game-server-custom-data:
-  # interlude volumes
+  # interlude directories
   game-server-int-logs:
   game-server-int-config:
   game-server-int-data:
@@ -38,7 +38,7 @@ services:
       - database
 
   game-server:
-    # previously build with ./make_docker_image
+    # previously build with ./make_docker_image.sh
     image: l2j-server-game:latest
     depends_on:
       - game-database
@@ -61,7 +61,7 @@ services:
       - L2JGAME_database_Password=mariadb_l2jgs_password
       # Connect to loginserver on this host and port
       - L2JGAME_server_LoginHost=login-server
-      - L2JGAME_server-LoginPort=9014
+      - L2JGAME_server_LoginPort=9014
     volumes:
       - game-server-logs:/opt/l2j/deploy/game/logs:rw
       - game-server-custom-data:/opt/l2j/custom/game:rw
@@ -70,7 +70,7 @@ services:
       - server
 
 #  game-server-interlude:
-    # previously build with ./make_docker_image -g Interlude -d Interlude -t Interlude
+    # previously build with ./make_docker_image.sh -g Interlude -d Interlude -t Interlude
 #    image: l2j-server-game:Interlude
 #    depends_on:
 #      - game-database
