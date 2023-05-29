@@ -18,6 +18,7 @@ usage_out() {
   info_out "    -u <user>   The user on the docker hub."
   info_out "    -n <name>   The image name. Defaults to 'l2j-server-game'."
   info_out "    -t <tag>    The tag of the image to build. Defaults to 'latest'."
+  info_out "    -r          Fully rebuild the docker image."
 }
 
 input_in() {
@@ -29,7 +30,11 @@ input_in() {
 }
 
 build_docker_image() {
-  docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4"
+  if [ $FULLY_REBUILD -eq 1 ]; then
+    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4" --no-cache
+  else
+    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4"
+  fi
 }
 
 . ./parse_opts.sh
@@ -40,6 +45,7 @@ L2JDP_BRANCH="develop"
 L2J_IMAGE_USER=""
 L2J_IMAGE_NAME="l2j-server-game"
 L2J_IMAGE_TAG="latest"
+FULLY_REBUILD="0"
 
 [ ! -z $OPT_i ] && INTERACTIVE=1
 [ ! -z $OPT_g ] && L2JGAME_BRANCH="$OPT_g"
@@ -47,6 +53,7 @@ L2J_IMAGE_TAG="latest"
 [ ! -z $OPT_u ] && L2J_IMAGE_USER="$OPT_u"
 [ ! -z $OPT_n ] && L2J_IMAGE_NAME="$OPT_n"
 [ ! -z $OPT_t ] && L2J_IMAGE_TAG="$OPT_t"
+[ ! -z $OPT_r ] && FULLY_REBUILD=1
 
 if [ ! -z $OPT_h ]; then
   usage_out
