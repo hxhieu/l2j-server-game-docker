@@ -71,11 +71,14 @@ else
       mv "$LOGFILE" "$LOGDIR/`date +%Y-%m-%d_%H-%M-%S`_$LOGFILE_NAME"
     done
 
-    procman_launch "java $L2JGAME_JAVA_ARGS -jar l2jserver.jar $L2JGAME_APP_ARGS"
-    server_pid=$?
+    java $L2JGAME_JAVA_ARGS -jar l2jserver.jar $L2JGAME_APP_ARGS &
+    server_pid=$!
+    procman_add_child_pid "$server_pid"
     echo "Gameserver started with PID $server_pid."
+
     wait "$server_pid"
     err=$?
+
     echo "Gameserver terminated with exit code $err."
   done
 
