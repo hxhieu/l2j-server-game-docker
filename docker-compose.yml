@@ -8,11 +8,11 @@ volumes:
   # custom gameserver data is preserved here
   game-server-custom-data:
   # interlude directories
-  game-server-int-logs:
-  game-server-int-config:
-  game-server-int-data:
-  game-server-int-geodata:
-  game-server-int-pathnode:
+#  game-server-int-logs:
+#  game-server-int-config:
+#  game-server-int-data:
+#  game-server-int-geodata:
+#  game-server-int-pathnode:
 
 networks:
   default:
@@ -24,7 +24,7 @@ networks:
 
 services:
   game-database:
-    image: mariadb:10.9.3
+    image: mariadb:10.11
     container_name: game-database
     #environment:
       # variables required on first startup, remove after first run
