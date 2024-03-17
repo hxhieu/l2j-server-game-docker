@@ -39,6 +39,15 @@ Additionally to `L2JGAME_DB_INIT` the following environment variables are requir
 
 When the database initialization is done, you have to remove the environment variables as the database is destroyed every time the intitialization is performed.
 
+# Environment Variables
+
+- `L2JGAME_JAVA_ARGS`: defaults to `-Xms1g -Xmx2g`
+    - Arguments to be added to the invokation of the java virtual machine. Additional to the arguments specified here, only the `-jar` argument is added.
+- `L2JGAME_APP_ARGS`: by default empty
+    - Arguments passed to the l2j server application.
+- `L2JGAME_<propertiesFileName>_<propertyName>`
+    - Overwrite a property of a properties file from l2j's config folder. See the next section `Modifying Server Configuration` for more details.
+
 # Modifying Server Configuration
 
 You have two possibilities to overwrite server configuration properties:
