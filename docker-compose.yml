@@ -1,45 +1,80 @@
-version: "2.4"
-
-volumes:
-  # database data is preserved here
-  game-database-data:
-  # logs
-  game-server-logs:
-  # custom gameserver data is preserved here
-  game-server-custom-data:
-  # interlude directories
-#  game-server-int-logs:
-#  game-server-int-config:
-#  game-server-int-data:
-#  game-server-int-geodata:
-#  game-server-int-pathnode:
-
 networks:
   default:
     driver: none
   database:
-    name: l2jserver-gs-db
+    name: l2jserver-db
   server:
     name: l2jserver
 
 services:
+  login-database:
+    image: mariadb:10.11
+    container_name: login-database
+    ports:
+      - "33306:3306"
+    environment:
+      # variables required on first startup, remove after first run
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_ROOT_HOST=%
+      - MARIADB_MYSQL_LOCALHOST_USER=1
+      - MARIADB_DATABASE=l2jls
+    volumes:
+      - ../_live/server-login/mariadb:/var/lib/mysql:rw
+    networks:
+      - database
+
+  login-server:
+    image: hxhieu/l2j-server-login
+    container_name: l2j-server-login
+    depends_on:
+      - login-database
+    ports:
+      # gameserver listener, only expose when login and game are on different hosts
+      - 9014:9014
+      # gameclient listener
+      - 2106:2106
+    environment:
+      # variables required on first startup to initialize the database
+      # - L2JLOGIN_DB_INIT=1
+      # - L2JLOGIN_DB_HOST=login-database
+      # - L2JLOGIN_DB_PORT=3306
+      # - L2JLOGIN_DB_USER=l2jls
+      # - L2JLOGIN_DB_PASS=${DB_USER_PASSWORD}
+      # - L2JLOGIN_DB_NAME=l2jls
+      # - L2JLOGIN_DB_INSTALL_USER=root
+      # - L2JLOGIN_DB_INSTALL_PASS=${DB_ROOT_PASSWORD}
+      # variables required after initial start or custom config files in the mapped volume for custom data
+      - L2JLOGIN_server_GameServerHost=*
+      - L2JLOGIN_database_URL=jdbc:mariadb://login-database:3306/l2jls
+      - L2JLOGIN_database_User=l2jls
+      - L2JLOGIN_database_Password=${DB_USER_PASSWORD}
+    volumes:
+      - ../_live/server-login/logs:/opt/l2j/deploy/login/logs:rw
+      - ../_live/server-login/custom-data:/opt/l2j/custom/login:rw
+    networks:
+      - database
+      - server
+
   game-database:
     image: mariadb:10.11
     container_name: game-database
-    #environment:
+    ports:
+      - "43306:3306"
+    environment:
       # variables required on first startup, remove after first run
-      #- MARIADB_ROOT_PASSWORD=mariadb_root_password
-      #- MARIADB_ROOT_HOST=%
-      #- MARIADB_MYSQL_LOCALHOST_USER=1
-      #- MARIADB_DATABASE=l2jgs
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_ROOT_HOST=%
+      - MARIADB_MYSQL_LOCALHOST_USER=1
+      - MARIADB_DATABASE=l2jgs
     volumes:
-      - game-database-data:/var/lib/mysql:rw
+      - ../_live/server-game/mariadb:/var/lib/mysql:rw
     networks:
       - database
 
   game-server:
     # previously build with ./make_docker_image.sh
-    image: l2j-server-game:latest
+    image: hxhieu/l2j-server-game
+    container_name: l2j-server-game
     depends_on:
       - game-database
     ports:
@@ -47,61 +82,25 @@ services:
       - 7777:7777
     environment:
       # variables required on first startup to initialize the database
-      #- L2JGAME_DB_INIT=1
-      #- L2JGAME_DB_HOST=game-database
-      #- L2JGAME_DB_PORT=3306
-      #- L2JGAME_DB_USER=l2jgs
-      #- L2JGAME_DB_PASS=mariadb_l2jgs_password
-      #- L2JGAME_DB_NAME=l2jgs
-      #- L2JGAME_DB_INSTALL_USER=root
-      #- L2JGAME_DB_INSTALL_PASS=mariadb_root_password
+      # - L2JGAME_DB_INIT=1
+      # - L2JGAME_DB_HOST=game-database
+      # - L2JGAME_DB_PORT=3306
+      # - L2JGAME_DB_USER=l2jgs
+      # - L2JGAME_DB_PASS=${DB_ROOT_PASSWORD}
+      # - L2JGAME_DB_NAME=l2jgs
+      # - L2JGAME_DB_INSTALL_USER=root
+      # - L2JGAME_DB_INSTALL_PASS=${DB_ROOT_PASSWORD}
       # variables required after initial start or custom config files in the mapped volume for custom data
       - L2JGAME_database_URL=jdbc:mariadb://game-database:3306/l2jgs
       - L2JGAME_database_User=l2jgs
-      - L2JGAME_database_Password=mariadb_l2jgs_password
+      - L2JGAME_database_Password=${DB_ROOT_PASSWORD}
       # Connect to loginserver on this host and port
       - L2JGAME_server_LoginHost=login-server
       - L2JGAME_server_LoginPort=9014
     volumes:
-      - game-server-logs:/opt/l2j/deploy/game/logs:rw
-      - game-server-custom-data:/opt/l2j/custom/game:rw
+      - ../_live/server-game/logs:/opt/l2j/deploy/game/logs:rw
+      - ../_live/server-game/custom-data:/opt/l2j/custom/game:rw
     networks:
       - database
       - server
 
-#  game-server-interlude:
-    # previously build with ./make_docker_image.sh -g Interlude -d Interlude -t Interlude
-#    image: l2j-server-game:Interlude
-#    depends_on:
-#      - game-database
-#    ports:
-      # gameclient listener
-#      - 7777:7777
-#    environment:
-      # variables required on first startup to initialize the database
-#      - L2JGAME_DB_INIT=1
-#      - L2JGAME_DB_HOST=game-database
-#      - L2JGAME_DB_PORT=3306
-#      - L2JGAME_DB_USER=l2jgs
-#      - L2JGAME_DB_PASS=mariadb_l2jgs_password
-#      - L2JGAME_DB_NAME=l2jgsint
-#      - L2JGAME_DB_INSTALL_USER=root
-#      - L2JGAME_DB_INSTALL_PASS=mariadb_root_password
-      # variables required after initial start or custom config files in the mapped volumes
-#      - L2JGAME_server_URL=jdbc:mariadb://game-database:3306/l2jgsint
-#      - L2JGAME_server_Login=l2jgs
-#      - L2JGAME_server_Password=mariadb_l2jgs_password
-      # Connect to loginserver on this host and port
-#      - L2JGAME_server_LoginHost=login-server
-#      - L2JGAME_server_LoginPort=9014
-#    volumes:
-#      - game-server-int-logs:/opt/l2j/deploy/game/logs:rw
-       # readwrite required for automatic hexid.txt
-#      - game-server-int-config:/opt/l2j/deploy/game/config:rw
-       # readwrite required for crests
-#      - game-server-int-data:/opt/l2j/deploy/game/data:rw
-#      - game-server-int-geodata:/opt/l2j/deploy/game/geodata:ro
-#      - game-server-int-pathnode:/opt/l2j/deploy/game/pathnode:ro
-#    networks:
-#      - database
-#      - server
