@@ -97,10 +97,33 @@ services:
       # Connect to loginserver on this host and port
       - L2JGAME_server_LoginHost=login-server
       - L2JGAME_server_LoginPort=9014
+
+      # # Characters
+      # - L2JGAME_character_Delevel=${L2JGAME_character_Delevel}
+      # - L2JGAME_character_WeightLimit=${L2JGAME_character_WeightLimit}
+      # - L2JGAME_character_DeathPenaltyChance=${L2JGAME_character_DeathPenaltyChance}
+      # - L2JGAME_character_HpRegenMultiplier=${L2JGAME_character_HpRegenMultiplier}
+      # - L2JGAME_character_MpRegenMultiplier=${L2JGAME_character_MpRegenMultiplier}
+      # - L2JGAME_character_CpRegenMultiplier=${L2JGAME_character_CpRegenMultiplier}
+      # - L2JGAME_character_MaxPlayerLevel=${L2JGAME_character_MaxPlayerLevel}
+      # - L2JGAME_character_MaxSubclass=${L2JGAME_character_MaxSubclass}
+      # - L2JGAME_character_MaxSubclassLevel=${L2JGAME_character_MaxSubclassLevel}
+
+      # # Rates
+      # - L2JGAME_rates_DeathDropAmountMultiplier=${L2JGAME_rates_DeathDropAmountMultiplier}
+      # - L2JGAME_rates_CorpseDropAmountMultiplier=${L2JGAME_rates_CorpseDropAmountMultiplier}
+      # - L2JGAME_rates_HerbDropAmountMultiplier=${L2JGAME_rates_HerbDropAmountMultiplier}
+      # - L2JGAME_rates_RaidDropAmountMultiplier=${L2JGAME_rates_RaidDropAmountMultiplier}
+      # - L2JGAME_rates_RateSp=${L2JGAME_rates_RateSp}
+      # - L2JGAME_rates_RatePartySp=${L2JGAME_rates_RatePartySp}
+      # - L2JGAME_rates_RateQuestRewardAdena=${L2JGAME_rates_RateQuestRewardAdena}
+      # - L2JGAME_rates_UseQuestRewardMultipliers=${L2JGAME_rates_UseQuestRewardMultipliers}
+      # - L2JGAME_rates_RateQuestReward=${L2JGAME_rates_RateQuestReward}
+      # - L2JGAME_rates_PetXpRate=${L2JGAME_rates_PetXpRate}
     volumes:
       - ../_live/server-game/logs:/opt/l2j/deploy/game/logs:rw
       - ../_live/server-game/custom-data:/opt/l2j/custom/game:rw
-      - ./ipconfig.xml:/opt/l2j/deploy/game/config/ipconfig.xml:r
+      - ./config:/opt/l2j/deploy/game/config:r
     networks:
       - database
       - server
