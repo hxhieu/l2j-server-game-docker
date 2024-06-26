@@ -123,7 +123,9 @@ services:
     volumes:
       - ../_live/server-game/logs:/opt/l2j/deploy/game/logs:rw
       - ../_live/server-game/custom-data:/opt/l2j/custom/game:rw
-      - ./config:/opt/l2j/deploy/game/config:r
+      - ./config/ipconfig.xml:/opt/l2j/deploy/game/config/ipconfig.xml:r
+      - ./config/character.properties:/opt/l2j/deploy/game/config/character.properties:r
+      - ./config/rates.properties:/opt/l2j/deploy/game/config/rates.properties:r
     networks:
       - database
       - server
