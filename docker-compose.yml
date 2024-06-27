@@ -1,33 +1,8 @@
-networks:
-  default:
-    driver: none
-  database:
-    name: l2jserver-db
-  server:
-    name: l2jserver
-
 services:
-  login-database:
-    image: mariadb:10.11
-    container_name: login-database
-    ports:
-      - "33306:3306"
-    environment:
-      # variables required on first startup, remove after first run
-      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - MARIADB_ROOT_HOST=%
-      - MARIADB_MYSQL_LOCALHOST_USER=1
-      - MARIADB_DATABASE=l2jls
-    volumes:
-      - ../_live/server-login/mariadb:/var/lib/mysql:rw
-    networks:
-      - database
 
   login-server:
     image: hxhieu/l2j-server-login
     container_name: l2j-server-login
-    depends_on:
-      - login-database
     ports:
       # gameserver listener, only expose when login and game are on different hosts
       - 9014:9014
@@ -36,68 +11,46 @@ services:
     environment:
       # variables required on first startup to initialize the database
       # - L2JLOGIN_DB_INIT=1
-      # - L2JLOGIN_DB_HOST=login-database
-      # - L2JLOGIN_DB_PORT=3306
-      # - L2JLOGIN_DB_USER=l2jls
+      # - L2JLOGIN_DB_HOST=${DB_SERVER_HOST}
+      # - L2JLOGIN_DB_PORT=${DB_SERVER_PORT}
+      # - L2JLOGIN_DB_USER=${DB_USER_NAME}
       # - L2JLOGIN_DB_PASS=${DB_USER_PASSWORD}
       # - L2JLOGIN_DB_NAME=l2jls
-      # - L2JLOGIN_DB_INSTALL_USER=root
-      # - L2JLOGIN_DB_INSTALL_PASS=${DB_ROOT_PASSWORD}
+      # - L2JLOGIN_DB_INSTALL_USER=${DB_USER_NAME}
+      # - L2JLOGIN_DB_INSTALL_PASS=${DB_USER_PASSWORD}
       # variables required after initial start or custom config files in the mapped volume for custom data
       - L2JLOGIN_server_GameServerHost=*
-      - L2JLOGIN_database_URL=jdbc:mariadb://login-database:3306/l2jls
-      - L2JLOGIN_database_User=l2jls
+      - L2JLOGIN_database_URL=${DB_SERVER_ADDRESS}/l2jls
+      - L2JLOGIN_database_User=${DB_USER_NAME}
       - L2JLOGIN_database_Password=${DB_USER_PASSWORD}
     volumes:
       - ../_live/server-login/logs:/opt/l2j/deploy/login/logs:rw
       - ../_live/server-login/custom-data:/opt/l2j/custom/login:rw
-    networks:
-      - database
-      - server
-
-  game-database:
-    image: mariadb:10.11
-    container_name: game-database
-    ports:
-      - "43306:3306"
-    environment:
-      # variables required on first startup, remove after first run
-      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - MARIADB_ROOT_HOST=%
-      - MARIADB_MYSQL_LOCALHOST_USER=1
-      - MARIADB_DATABASE=l2jgs
-    volumes:
-      - ../_live/server-game/mariadb:/var/lib/mysql:rw
-    networks:
-      - database
 
   game-server:
     # previously build with ./make_docker_image.sh
     image: hxhieu/l2j-server-game
     container_name: l2j-server-game
-    depends_on:
-      - game-database
     ports:
       # gameclient listener
       - 7777:7777
     environment:
       # variables required on first startup to initialize the database
       # - L2JGAME_DB_INIT=1
-      # - L2JGAME_DB_HOST=game-database
-      # - L2JGAME_DB_PORT=3306
-      # - L2JGAME_DB_USER=l2jgs
-      # - L2JGAME_DB_PASS=${DB_ROOT_PASSWORD}
+      # - L2JGAME_DB_HOST=${DB_SERVER_HOST}
+      # - L2JGAME_DB_PORT=${DB_SERVER_PORT}
+      # - L2JGAME_DB_USER=${DB_USER_NAME}
+      # - L2JGAME_DB_PASS=${DB_USER_PASSWORD}
       # - L2JGAME_DB_NAME=l2jgs
-      # - L2JGAME_DB_INSTALL_USER=root
-      # - L2JGAME_DB_INSTALL_PASS=${DB_ROOT_PASSWORD}
+      # - L2JGAME_DB_INSTALL_USER=${DB_USER_NAME}
+      # - L2JGAME_DB_INSTALL_PASS=${DB_USER_PASSWORD}
       # variables required after initial start or custom config files in the mapped volume for custom data
-      - L2JGAME_database_URL=jdbc:mariadb://game-database:3306/l2jgs
-      - L2JGAME_database_User=l2jgs
-      - L2JGAME_database_Password=${DB_ROOT_PASSWORD}
+      - L2JGAME_database_URL=${DB_SERVER_ADDRESS}/l2jgs
+      - L2JGAME_database_User=${DB_USER_NAME}
+      - L2JGAME_database_Password=${DB_USER_PASSWORD}
       # Connect to loginserver on this host and port
       - L2JGAME_server_LoginHost=login-server
       - L2JGAME_server_LoginPort=9014
-
       # # Characters
       # - L2JGAME_character_Delevel=${L2JGAME_character_Delevel}
       # - L2JGAME_character_WeightLimit=${L2JGAME_character_WeightLimit}
@@ -126,7 +79,3 @@ services:
       - ./config/ipconfig.xml:/opt/l2j/deploy/game/config/ipconfig.xml:r
       - ./config/character.properties:/opt/l2j/deploy/game/config/character.properties:r
       - ./config/rates.properties:/opt/l2j/deploy/game/config/rates.properties:r
-    networks:
-      - database
-      - server
-
