@@ -79,3 +79,4 @@ services:
       - ./config/ipconfig.xml:/opt/l2j/deploy/game/config/ipconfig.xml:r
       - ./config/character.properties:/opt/l2j/deploy/game/config/character.properties:r
       - ./config/rates.properties:/opt/l2j/deploy/game/config/rates.properties:r
+      - ./config/npc.properties:/opt/l2j/deploy/game/config/npc.properties:r
