@@ -1,7 +1,7 @@
 FROM alpine:3.19 as base-image
 
 ENV L2JCLI_URI=https://git@bitbucket.org/l2jserver/l2j-server-cli.git
-ENV L2JGAME_URI=https://git@bitbucket.org/l2jserver/l2j-server-game.git
+ENV L2JGAME_URI=https://github.com/hxhieu/l2j-server-game
 ENV L2JDP_URI=https://git@bitbucket.org/l2jserver/l2j-server-datapack.git
 
 ENV L2J_DIR=/opt/l2j

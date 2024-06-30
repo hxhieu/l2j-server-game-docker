@@ -31,9 +31,9 @@ input_in() {
 
 build_docker_image() {
   if [ $FULLY_REBUILD -eq 1 ]; then
-    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4" --no-cache
+    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4" --no-cache --progress=plain
   else
-    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4"
+    docker build -f Dockerfile -t "$1" --pull "$2" --build-arg "L2JGAME_BRANCH=$3" --build-arg "L2JDP_BRANCH=$4" --progress=plain
   fi
 }
 

@@ -29,7 +29,7 @@ services:
 
   game-server:
     # previously build with ./make_docker_image.sh
-    image: hxhieu/l2j-server-game
+    image: hxhieu/l2j-server-game:${L2JGAME_IMAGE_TAG:-latest}
     container_name: l2j-server-game
     ports:
       # gameclient listener
@@ -74,6 +74,7 @@ services:
       # - L2JGAME_rates_RateQuestReward=${L2JGAME_rates_RateQuestReward}
       # - L2JGAME_rates_PetXpRate=${L2JGAME_rates_PetXpRate}
     volumes:
+      - ./geodata:/opt/l2j/deploy/game/data/geodata
       - ../_live/server-game/logs:/opt/l2j/deploy/game/logs:rw
       - ../_live/server-game/custom-data:/opt/l2j/custom/game:rw
       - ./config/ipconfig.xml:/opt/l2j/deploy/game/config/ipconfig.xml:r
